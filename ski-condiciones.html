@@ -120,16 +120,25 @@
     <!-- ================= HERO ================= -->
     <section class="glass rounded-2xl px-6 py-4 flex items-center gap-6 shrink-0 fade-el" id="heroWrap">
       <div class="min-w-0 flex-1">
-        <p class="text-[11px] uppercase tracking-[0.2em] text-[#7dd3fc]">Centro de ski</p>
-        <h1 id="cName" class="text-4xl font-extrabold tracking-tight truncate mt-0.5">—</h1>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span id="cZona" class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border">—</span>
+          <p class="text-[11px] uppercase tracking-[0.2em] text-[#7dd3fc]">Centro de ski</p>
+        </div>
+        <h1 id="cName" class="text-4xl font-extrabold tracking-tight truncate mt-1">—</h1>
         <p class="text-slate-400 text-sm mt-1 flex flex-wrap items-center gap-x-4 gap-y-0.5">
           <span class="inline-flex items-center gap-1.5"><i data-lucide="map-pin" class="w-4 h-4"></i> <span id="cCoords">—</span></span>
           <span class="inline-flex items-center gap-1.5"><i data-lucide="triangle" class="w-4 h-4"></i> <span id="cElev">—</span></span>
           <span class="inline-flex items-center gap-1.5"><i data-lucide="globe" class="w-4 h-4"></i> <span id="cRegion">—</span></span>
         </p>
-        <a id="mapsLink" href="#" target="_blank" rel="noopener" class="adn-maps mt-2 items-center gap-2 text-sm font-semibold text-[#bae6fd] bg-[#38bdf8]/12 border border-[#38bdf8]/30 rounded-lg px-3 py-2 active:scale-95 transition">
-          <i data-lucide="map-pin" class="w-4 h-4"></i> Ver en Google Maps <i data-lucide="external-link" class="w-3.5 h-3.5 text-[#7dd3fc]"></i>
-        </a>
+        <p id="cHist" class="text-[13px] text-slate-400 mt-1.5 leading-snug max-w-2xl">—</p>
+        <div class="flex flex-wrap items-center gap-2 mt-2">
+          <a id="mapsLink" href="#" target="_blank" rel="noopener" class="adn-maps items-center gap-2 text-sm font-semibold text-[#bae6fd] bg-[#38bdf8]/12 border border-[#38bdf8]/30 rounded-lg px-3 py-2 active:scale-95 transition">
+            <i data-lucide="map-pin" class="w-4 h-4"></i> Ver en Maps <i data-lucide="external-link" class="w-3.5 h-3.5 text-[#7dd3fc]"></i>
+          </a>
+          <a id="webLink" href="#" target="_blank" rel="noopener" class="adn-maps items-center gap-2 text-sm font-semibold text-slate-200 bg-slate-100/5 border border-slate-300/20 rounded-lg px-3 py-2 active:scale-95 transition">
+            <i data-lucide="globe" class="w-4 h-4 text-[#7dd3fc]"></i> Sitio web <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+          </a>
+        </div>
       </div>
       <div class="text-center shrink-0">
         <div class="flex items-start gap-2 justify-center">
@@ -227,14 +236,47 @@
   const drawIcons = () => window.lucide && lucide.createIcons();
   const round = (v) => (v == null ? '--' : Math.round(v));
 
-  // ===== Centros de ski del Central Andes (edítalos libremente) =====
+  // ===== Centros de ski (edítalos libremente) =====
+  const ZCOL = { 'Central':'#38bdf8', 'Centro-Sur':'#34d399', 'Sur':'#a78bfa', 'Austral':'#f472b6' };
   const CENTROS = [
-    { nombre: 'Valle Nevado',          lat: -33.3556, lon: -70.2506, elev: 2860, region: 'Región Metropolitana, Chile' },
-    { nombre: 'La Parva',              lat: -33.3286, lon: -70.2856, elev: 2750, region: 'Región Metropolitana, Chile' },
-    { nombre: 'El Colorado / Farellones', lat: -33.3536, lon: -70.2933, elev: 2430, region: 'Región Metropolitana, Chile' },
-    { nombre: 'Portillo',              lat: -32.8342, lon: -70.1289, elev: 2880, region: 'Región de Valparaíso, Chile' },
-    { nombre: 'Nevados de Chillán',    lat: -36.9053, lon: -71.4058, elev: 1650, region: 'Región de Ñuble, Chile' },
-    { nombre: 'Corralco',              lat: -38.4386, lon: -71.5133, elev: 1450, region: 'Región de La Araucanía, Chile' },
+    // ---- Zona Central ----
+    { nombre: 'Valle Nevado',        zona: 'Central', lat: -33.3556, lon: -70.2506, elev: 2860, region: 'Región Metropolitana, Chile', web: 'https://vallenevado.com',
+      historia: 'Fundado en 1988 por inversionistas franceses; una de las mayores áreas esquiables de Sudamérica.' },
+    { nombre: 'El Colorado',         zona: 'Central', lat: -33.3536, lon: -70.2933, elev: 2560, region: 'Región Metropolitana, Chile', web: 'https://elcolorado.cl',
+      historia: 'En Farellones, integra el complejo de los Tres Valles con un amplio dominio para todo nivel.' },
+    { nombre: 'La Parva',            zona: 'Central', lat: -33.3286, lon: -70.2856, elev: 2750, region: 'Región Metropolitana, Chile', web: 'https://www.laparva.cl',
+      historia: 'Pueblo-estación nacido a fines de los años 50; parte de los Tres Valles, frente a Santiago.' },
+    { nombre: 'Ski Portillo',        zona: 'Central', lat: -32.8342, lon: -70.1289, elev: 2680, region: 'Región de Valparaíso, Chile', web: 'https://www.skiportillo.com',
+      historia: 'El centro más antiguo de Sudamérica (1949) y única sede de un Mundial de Esquí (1966), junto a la Laguna del Inca.' },
+    { nombre: 'Parques de Farellones', zona: 'Central', lat: -33.3536, lon: -70.2989, elev: 2340, region: 'Región Metropolitana, Chile', web: 'https://www.parquesdefarellones.com',
+      historia: 'En Farellones, cuna del esquí chileno en los años 30; hoy un parque de nieve familiar.' },
+    { nombre: 'Lagunillas',          zona: 'Central', lat: -33.9800, lon: -70.0800, elev: 2200, region: 'Región Metropolitana, Chile', web: 'https://www.lagunillas.cl',
+      historia: 'Creado por el Club Andino de Chile en 1933; el único centro de esquí no comercial del país, en el Cajón del Maipo.' },
+    { nombre: 'Ski El Arpa',         zona: 'Central', lat: -32.6600, lon: -70.4000, elev: 2690, region: 'Región de Valparaíso, Chile', web: 'https://www.skiarpa.com',
+      historia: 'Único cat-skiing de Sudamérica (sin andariveles, se sube en snowcat), en los faldeos del Aconcagua.' },
+    // ---- Zona Centro-Sur ----
+    { nombre: 'Chapa Verde',         zona: 'Centro-Sur', lat: -34.2800, lon: -70.3000, elev: 2370, region: "Región de O'Higgins, Chile", web: 'https://www.chapaverde.cl',
+      historia: 'Ligado históricamente a la mina El Teniente (Codelco), a 58 km de Rancagua.' },
+    { nombre: 'Nevados de Chillán',  zona: 'Centro-Sur', lat: -36.9053, lon: -71.4058, elev: 1650, region: 'Región de Ñuble, Chile', web: 'https://nevadosdechillan.com',
+      historia: 'Centro volcánico con termas naturales y una de las mayores áreas esquiables del sur de Chile.' },
+    { nombre: 'Volcán Antuco',       zona: 'Centro-Sur', lat: -37.3500, lon: -71.3800, elev: 1850, region: 'Región del Biobío, Chile', web: 'https://www.facebook.com/skiantucochile',
+      historia: 'En los faldeos del volcán Antuco, dentro del PN Laguna del Laja; sede del Club de Esquí Los Ángeles.' },
+    // ---- Zona Sur ----
+    { nombre: 'Corralco',            zona: 'Sur', lat: -38.4386, lon: -71.5133, elev: 1550, region: 'Región de La Araucanía, Chile', web: 'https://www.corralco.com',
+      historia: 'En el volcán Lonquimay, rodeado de araucarias milenarias y reconocido por su nieve seca.' },
+    { nombre: 'Centro de Montaña Pillán', zona: 'Sur', lat: -39.4000, lon: -71.9500, elev: 1200, region: 'Región de La Araucanía, Chile', web: 'https://centropillan.cl',
+      historia: 'Ex Ski Pucón: en el volcán Villarrica (activo), 19 km al norte de Pucón, dentro del PN Villarrica.' },
+    { nombre: 'Las Araucarias',      zona: 'Sur', lat: -38.6700, lon: -71.7600, elev: 1550, region: 'Región de La Araucanía, Chile', web: 'https://clubskiaraucarias.cl',
+      historia: 'En los faldeos del volcán Llaima, a 82 km de Temuco, entre bosques de araucarias.' },
+    { nombre: 'Antillanca',          zona: 'Sur', lat: -40.7780, lon: -72.1560, elev: 1050, region: 'Región de Los Lagos, Chile', web: 'https://www.antillanca.cl',
+      historia: 'En el volcán Casablanca, dentro del PN Puyehue; administrado por el Club Andino de Osorno.' },
+    { nombre: 'Volcán Osorno',       zona: 'Sur', lat: -41.1053, lon: -72.4962, elev: 1200, region: 'Región de Los Lagos, Chile', web: 'https://www.centrovolcanosorno.cl',
+      historia: "Antes 'La Burbuja', en el volcán Osorno con vista al lago Llanquihue; sube hasta ~2.650 m." },
+    // ---- Zona Austral ----
+    { nombre: 'El Fraile',           zona: 'Austral', lat: -45.6600, lon: -71.8000, elev: 1599, region: 'Región de Aysén, Chile', web: 'https://www.chileanski.com/esp/el-fraile/',
+      historia: 'A 29 km de Coyhaique, entre bosques de lenga y ñirre; la joya del esquí austral.' },
+    { nombre: 'Club Andino · Cerro Mirador', zona: 'Austral', lat: -53.1300, lon: -71.0200, elev: 600, region: 'Región de Magallanes, Chile', web: 'https://www.facebook.com/CerroMiradorClubAndino',
+      historia: 'A 9 km de Punta Arenas, en la Reserva Nacional Magallanes; uno de los centros de esquí más australes del mundo.' },
   ];
 
   let current = 0, paused = false, rotTimer = null;
@@ -301,6 +343,10 @@
     $('cCoords').textContent = `${c.lat.toFixed(4)}, ${c.lon.toFixed(4)}`;
     $('cElev').textContent = `~${c.elev.toLocaleString('es-CL')} m s.n.m.`;
     $('cRegion').textContent = c.region;
+    const zc = ZCOL[c.zona] || '#7dd3fc';
+    const zb = $('cZona'); zb.textContent = 'Zona ' + c.zona; zb.style.color = zc; zb.style.background = zc + '22'; zb.style.borderColor = zc + '55';
+    $('cHist').textContent = c.historia || '';
+    $('webLink').href = c.web || '#';
     $('mapsLink').href = `https://www.google.com/maps/search/?api=1&query=${c.lat},${c.lon}`;
 
     $('temp').textContent = round(cur.temperature_2m);
