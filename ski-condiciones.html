@@ -82,6 +82,7 @@
       #skiPP svg{width:24px;height:24px;pointer-events:none} #skiPP button[data-act="toggle"] svg{width:27px;height:27px}
     }
     .adn-maps{display:none} @media(max-width:820px){.adn-maps{display:inline-flex}}
+    .adn-mobile-only{display:none} @media(max-width:820px){.adn-mobile-only{display:block}}
   </style>
 </head>
 <body class="antialiased">
@@ -152,6 +153,19 @@
           <span class="inline-flex items-center gap-1"><i data-lucide="arrow-up" class="w-4 h-4 text-amber-300"></i> <span id="tmax" class="text-slate-200 font-semibold">--°</span></span>
         </div>
       </div>
+    </section>
+
+    <!-- ================= PANORAMA + PRECIO (solo móvil) ================= -->
+    <section class="adn-mobile-only card px-5 py-4 shrink-0">
+      <div class="flex items-center justify-between gap-3 mb-3">
+        <p class="text-sm font-bold flex items-center gap-2"><span class="chip-ico w-8 h-8" style="background:rgba(167,139,250,.18)"><i data-lucide="sparkles" class="w-5 h-5 text-[#c4b5fd]"></i></span> El panorama</p>
+        <div class="text-right shrink-0">
+          <p class="text-[10px] uppercase tracking-wider text-slate-400">Ticket adulto · referencial</p>
+          <p id="precioRef" class="grotesk text-2xl font-bold grad-name leading-none">—</p>
+        </div>
+      </div>
+      <div id="panoramaChips" class="flex flex-wrap gap-2"></div>
+      <p class="text-[11px] text-slate-500 mt-3 flex items-start gap-1.5"><i data-lucide="info" class="w-3.5 h-3.5 mt-0.5 shrink-0"></i> Valores 2025 aproximados; confirma día, horarios y tarifas en el sitio web del centro.</p>
     </section>
 
     <!-- ================= MÉTRICAS ================= -->
@@ -273,6 +287,27 @@
       historia: 'A 9 km de Punta Arenas, en la Reserva Nacional Magallanes; uno de los centros de esquí más australes del mundo.' },
   ];
 
+  // Panoramas (qué hacer) y precio referencial de ticket adulto · valores 2025 aprox., confirmar en cada sitio
+  const EXTRA = {
+    'Valle Nevado':        { precio: '~$64.000', panoramas: ['Ski','Snowboard','Fuera de pista','Snowpark','Gastronomía de altura'] },
+    'El Colorado':         { precio: '~$52.000', panoramas: ['Ski','Snowboard','Snowpark','Escuela','Conexión Tres Valles'] },
+    'La Parva':            { precio: '~$57.000', panoramas: ['Ski','Snowboard','Fuera de pista','Ambiente de montaña'] },
+    'Ski Portillo':        { precio: '~$58.000', panoramas: ['Ski','Snowboard','Fuera de pista','Hotel histórico','Laguna del Inca'] },
+    'Parques de Farellones': { precio: '~$25.000', panoramas: ['Parque de nieve','Tubing','Trineos','Principiantes','Familiar'] },
+    'Lagunillas':          { precio: '~$35.000', panoramas: ['Ski familiar','Principiantes','Club Andino','Cerca de Santiago'] },
+    'Ski El Arpa':         { precio: '~$130.000 · día cat-ski', panoramas: ['Cat-skiing','Nieve virgen','Fuera de pista','Vistas al Aconcagua'] },
+    'Chapa Verde':         { precio: '~$30.000', panoramas: ['Ski','Snowboard','Familiar','Acceso en bus'] },
+    'Nevados de Chillán':  { precio: '~$75.000', panoramas: ['Ski','Snowboard','Termas naturales','Gastronomía','Bosques'] },
+    'Volcán Antuco':       { precio: '~$20.000', panoramas: ['Ski tranquilo','Randonnée','Paisaje volcánico','PN Laguna del Laja'] },
+    'Corralco':            { precio: '~$55.000', panoramas: ['Ski','Snowboard','Randonnée','Araucarias','Hotel de montaña'] },
+    'Centro de Montaña Pillán': { precio: '~$35.000', panoramas: ['Ski en volcán activo','Vistas al lago','Cerca de Pucón','Termas'] },
+    'Las Araucarias':      { precio: '~$25.000', panoramas: ['Ski entre araucarias','Familiar','PN Conguillío cerca'] },
+    'Antillanca':          { precio: '~$30.000', panoramas: ['Ski','Randonnée','Termas Aguas Calientes','PN Puyehue'] },
+    'Volcán Osorno':       { precio: '~$35.000', panoramas: ['Ski con vista al lago','Familiar','Cerca de Puerto Varas'] },
+    'El Fraile':           { precio: '~$20.000', panoramas: ['Ski entre lengas','Tranquilo','Naturaleza austral'] },
+    'Club Andino · Cerro Mirador': { precio: '~$18.000', panoramas: ['Ski con vista a Punta Arenas','Estrecho de Magallanes','Cerca de la ciudad'] },
+  };
+
   let current = 0, paused = false, rotTimer = null;
   const cache = {};
 
@@ -332,6 +367,9 @@
     const zc = ZCOL[c.zona] || '#22d3ee';
     const zb = $('cZona'); zb.textContent = 'Zona ' + c.zona; zb.style.color = zc; zb.style.background = zc + '22'; zb.style.borderColor = zc + '66';
     $('cHist').textContent = c.historia || '';
+    const ex = EXTRA[c.nombre] || {};
+    $('precioRef').textContent = ex.precio || 'Consultar';
+    $('panoramaChips').innerHTML = (ex.panoramas || []).map(p => `<span class="pill text-xs px-3 py-1.5" style="background:rgba(56,189,248,.12);color:#bae6fd;border:1px solid rgba(56,189,248,.28)">${p}</span>`).join('');
     $('webLink').href = c.web || '#';
     $('mapsLink').href = `https://www.google.com/maps/search/?api=1&query=${c.lat},${c.lon}`;
 
