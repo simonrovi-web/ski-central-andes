@@ -155,6 +155,21 @@
       </div>
     </section>
 
+    <!-- ================= RIESGO DE AVALANCHA (estimado) ================= -->
+    <section id="avaCard" class="card px-5 py-3 shrink-0 flex items-center gap-4" style="border-color:rgba(148,180,220,.14)">
+      <div class="chip-ico h-12 w-12 shrink-0" style="background:rgba(251,113,133,.14)"><i data-lucide="mountain-snow" class="w-7 h-7 text-[#fda4af]"></i></div>
+      <div class="min-w-0 flex-1">
+        <p class="text-[11px] uppercase tracking-wider text-slate-400 flex items-center gap-2"><i data-lucide="triangle-alert" class="w-4 h-4"></i> Riesgo de avalancha · estimado</p>
+        <div class="flex items-baseline gap-2 mt-0.5">
+          <span id="avaLevel" class="grotesk text-2xl font-bold">—</span>
+          <span id="avaNum" class="grotesk text-sm font-bold">—</span>
+        </div>
+        <div class="h-1.5 rounded-full mt-1.5 max-w-md" style="background:rgba(148,180,220,.12)"><div id="avaBar" class="h-full rounded-full transition-all duration-700" style="width:0%"></div></div>
+        <p id="avaWhy" class="text-xs text-slate-400 mt-1.5">—</p>
+        <p class="text-[11px] text-slate-500 mt-1">Estimación desde el clima (nieve, viento, deshielo) · <b class="text-slate-400">no es boletín oficial</b>, consulta a la patrulla del centro.</p>
+      </div>
+    </section>
+
     <!-- ================= PANORAMA + PRECIO (solo móvil) ================= -->
     <section class="adn-mobile-only card px-5 py-4 shrink-0">
       <div class="flex items-center justify-between gap-3 mb-3">
@@ -240,6 +255,7 @@
 
 <script>
   const TZ = 'America/Santiago';
+  const PAST = 2, TODAY = PAST; // con past_days=2, el día de hoy es el índice 2 en 'daily'
   const ROTATE_MS = 12000, REFRESH_MS = 10 * 60 * 1000;
   const $ = (id) => document.getElementById(id);
   const drawIcons = () => window.lucide && lucide.createIcons();
@@ -348,7 +364,7 @@
       + '&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_gusts_10m,is_day,snowfall,precipitation'
       + '&hourly=snow_depth,freezing_level_height,visibility,uv_index,weather_code,is_day,snowfall'
       + '&daily=snowfall_sum,temperature_2m_max,temperature_2m_min,weather_code'
-      + '&wind_speed_unit=kmh&forecast_days=6';
+      + '&wind_speed_unit=kmh&forecast_days=6&past_days=2';
   }
   function currentHourIndex(times){ const now = Date.now();
     for (let i = 0; i < times.length - 1; i++){ if (new Date(times[i]).getTime() <= now && now < new Date(times[i+1]).getTime()) return i; } return 0; }
@@ -379,10 +395,10 @@
     const [sky, ic] = wmo(cur.weather_code);
     $('skyText').textContent = sky;
     $('skyIcon').setAttribute('data-lucide', iconDN(ic, isDay)); $('skyIcon').classList.remove('animate-spinSlow');
-    $('tmin').textContent = round(data.daily.temperature_2m_min[0]) + '°';
-    $('tmax').textContent = round(data.daily.temperature_2m_max[0]) + '°';
+    $('tmin').textContent = round(data.daily.temperature_2m_min[TODAY]) + '°';
+    $('tmax').textContent = round(data.daily.temperature_2m_max[TODAY]) + '°';
 
-    const fresca = data.daily.snowfall_sum?.[0] ?? cur.snowfall ?? 0;
+    const fresca = data.daily.snowfall_sum?.[TODAY] ?? cur.snowfall ?? 0;
     $('snowNew').textContent = (Math.round(fresca * 10) / 10).toLocaleString('es-CL');
     const depthM = data.hourly.snow_depth?.[hi], depthCm = depthM != null ? Math.round(depthM * 100) : null;
     $('snowBig').textContent = depthCm != null ? depthCm.toLocaleString('es-CL') : '--';
@@ -407,16 +423,44 @@
     $('uv').textContent = uv != null ? Math.round(uv) : '--';
     $('uvLabel').textContent = uv == null ? '—' : uv < 3 ? 'Bajo' : uv < 6 ? 'Moderado' : uv < 8 ? 'Alto' : uv < 11 ? 'Muy alto' : 'Extremo';
 
+    // Riesgo de avalancha (estimado desde el clima: nieve reciente + viento + deshielo)
+    const freshRec = (data.daily.snowfall_sum || []).slice(0, TODAY + 1).reduce((a, b) => a + (b || 0), 0);
+    const tmaxHoy = data.daily.temperature_2m_max?.[TODAY];
+    const av = avalancha(freshRec, g, tmaxHoy);
+    $('avaLevel').textContent = av.t; $('avaLevel').style.color = av.c;
+    $('avaNum').textContent = 'Nivel ' + av.n + '/5'; $('avaNum').style.color = av.c;
+    $('avaBar').style.width = (av.n * 20) + '%'; $('avaBar').style.background = av.c;
+    $('avaCard').style.borderColor = av.c + '66';
+    $('avaCard').style.background = 'linear-gradient(160deg,' + av.c + '1e, rgba(12,20,38,.5))';
+    $('avaWhy').textContent = `Nieve reciente ~${Math.round(freshRec)} cm · ráfagas ${round(g)} km/h`
+      + ((tmaxHoy >= 2 && freshRec >= 10) ? ' · deshielo sobre nieve fresca' : '');
+
     renderForecast(data.daily);
     const hw = $('heroWrap'); hw.classList.remove('fade'); void hw.offsetWidth; hw.classList.add('fade');
     drawIcons();
   }
 
+  // Estimación de peligro de avalancha (escala EAWS 1-5) desde variables meteo
+  function avalancha(freshCm, gust, tmax){
+    let s = 0;
+    if (freshCm >= 50) s += 3; else if (freshCm >= 30) s += 2; else if (freshCm >= 12) s += 1;
+    if (gust >= 90) s += 2; else if (gust >= 55) s += 1;
+    if (tmax >= 2 && freshCm >= 10) s += 1;
+    s = Math.min(4, s);
+    return [
+      { n:1, t:'Bajo',        c:'#34d399' },
+      { n:2, t:'Moderado',    c:'#facc15' },
+      { n:3, t:'Considerable', c:'#fb923c' },
+      { n:4, t:'Alto',        c:'#f43f5e' },
+      { n:5, t:'Muy alto',    c:'#dc2626' },
+    ][s];
+  }
+
   function renderForecast(daily){
-    const dias = Math.min(6, daily.time.length); let html = '';
-    for (let i = 0; i < dias; i++){
+    const end = Math.min(daily.time.length, TODAY + 6); let html = '';
+    for (let i = TODAY; i < end; i++){
       const d = new Date(daily.time[i] + 'T12:00:00');
-      const dl = i === 0 ? 'Hoy' : d.toLocaleDateString('es-CL', { timeZone:TZ, weekday:'short' });
+      const dl = i === TODAY ? 'Hoy' : d.toLocaleDateString('es-CL', { timeZone:TZ, weekday:'short' });
       const [ , ic ] = wmo(daily.weather_code[i]);
       const snow = daily.snowfall_sum[i] ?? 0, strong = snow >= 5;
       html += `<div class="rounded-2xl px-2 py-3 text-center transition" style="${strong?'background:linear-gradient(180deg,rgba(34,211,238,.18),rgba(167,139,250,.12));border:1px solid rgba(34,211,238,.4);box-shadow:0 0 18px rgba(34,211,238,.15)':'background:rgba(148,180,220,.06);border:1px solid rgba(148,180,220,.1)'}">
