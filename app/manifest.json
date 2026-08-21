@@ -1,0 +1,18 @@
+{
+  "name": "Ski Central Andes · Todo el ski de Chile",
+  "short_name": "Ski Central Andes",
+  "description": "Condiciones, nieve, viento y seguridad de los 17 centros de ski de Chile, en vivo.",
+  "start_url": ".",
+  "scope": "/ski-central-andes/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#070e1c",
+  "theme_color": "#070e1c",
+  "lang": "es-CL",
+  "categories": ["sports", "weather", "travel"],
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"icon-512-maskable.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ]
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Ski Central Andes · Todo el ski de Chile</title>
+  <meta name="description" content="Condiciones, nieve, viento y seguridad de los 17 centros de ski de Chile, en vivo. Ski Central Andes." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css" />
+  <style>
+    :root{ --cyan:#22d3ee; --violet:#a78bfa; --ink:#eaf4ff; }
+    html{ -webkit-text-size-adjust:100%; }
+    body { font-family:'Inter', ui-sans-serif, system-ui, sans-serif; color:var(--ink); min-height:100vh; background:#070e1c; }
+    #aurora{ position:fixed; inset:-20%; z-index:0; pointer-events:none; filter: blur(70px); opacity:.5; }
+    #aurora .b{ position:absolute; border-radius:50%; mix-blend-mode:screen; }
+    #aurora .b1{ width:60vw; height:60vw; left:-10%; top:-14%; background: radial-gradient(circle, rgba(34,211,238,.55), transparent 62%); }
+    #aurora .b2{ width:55vw; height:55vw; right:-8%; top:-6%; background: radial-gradient(circle, rgba(167,139,250,.5), transparent 62%); }
+    #aurora .b3{ width:65vw; height:65vw; left:25%; bottom:-30%; background: radial-gradient(circle, rgba(56,189,248,.4), transparent 60%); }
+    .grotesk{ font-family:'Space Grotesk', ui-sans-serif, system-ui, sans-serif; }
+    .grad-name{ background: linear-gradient(100deg,#a5f3fc 0%, #38bdf8 42%, #a78bfa 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .glass{ background: linear-gradient(160deg, rgba(30,44,74,.55), rgba(12,20,38,.5)); backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); border:1px solid rgba(148,180,220,.14); }
+    .chip-ico{ display:grid; place-items:center; border-radius:16px; }
+    .pill{ display:inline-flex; align-items:center; gap:.4rem; border-radius:999px; font-weight:700; }
+    .card{ position:relative; border-radius:24px; overflow:hidden; transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    .card:hover{ transform:translateY(-4px); border-color:rgba(34,211,238,.4); box-shadow:0 16px 40px rgba(0,0,0,.5); }
+    .card::before{ content:''; position:absolute; top:0; left:22px; right:22px; height:2px; border-radius:0 0 3px 3px; background:var(--accent,#22d3ee); opacity:.75; }
+    .metric-icon{ filter: drop-shadow(0 0 8px currentColor); }
+    .voice-chip{ color:#bae6fd; background:linear-gradient(135deg, rgba(34,211,238,.2), rgba(56,189,248,.12)); border:1px solid rgba(56,189,248,.4); }
+    .voice-chip .vdot{ width:5px; height:5px; border-radius:50%; background:#a5f3fc; box-shadow:0 0 6px #22d3ee; animation:vpulse 1.6s ease-in-out infinite; }
+    @keyframes vpulse{ 0%,100%{ opacity:.35; transform:scale(.8) } 50%{ opacity:1; transform:scale(1.15) } }
+    @keyframes floaty{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-6px) } }
+    .floaty{ animation:floaty 4s ease-in-out infinite; }
+    #install{ display:none; }
+  </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#070e1c">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Ski Central Andes">
+</head>
+<body class="antialiased">
+<div id="aurora"><div class="b b1"></div><div class="b b2"></div><div class="b b3"></div></div>
+
+<div class="relative z-10 max-w-6xl mx-auto px-5 sm:px-8 py-10">
+
+  <!-- HERO -->
+  <header class="text-center">
+    <div class="inline-flex h-16 w-16 rounded-3xl items-center justify-center floaty" style="background:linear-gradient(140deg,rgba(34,211,238,.28),rgba(167,139,250,.28));border:1px solid rgba(34,211,238,.4)">
+      <i data-lucide="snowflake" class="w-9 h-9 text-[#7dd3fc] metric-icon"></i>
+    </div>
+    <h1 class="grotesk text-4xl sm:text-5xl font-bold tracking-tight mt-6 flex items-center justify-center gap-3 flex-wrap"><span class="grad-name">SKI CENTRAL ANDES</span> <span class="fi fi-cl" style="font-size:1.4em;border-radius:5px;box-shadow:0 2px 6px rgba(0,0,0,.4)"></span></h1>
+    <p class="text-slate-300 max-w-xl mx-auto mt-4 leading-relaxed">Todo el ski de Chile <b class="text-[#7dd3fc]">en vivo</b> — clima, nieve, viento y seguridad de los 17 centros, de la zona central a la austral. 🎿</p>
+    <div class="flex flex-wrap items-center justify-center gap-3 mt-6 text-xs">
+      <span class="glass rounded-full px-4 py-1.5 flex items-center gap-2"><i data-lucide="mountain-snow" class="w-4 h-4 text-[#7dd3fc]"></i> 17 centros</span>
+      <span class="glass rounded-full px-4 py-1.5 flex items-center gap-2"><i data-lucide="map" class="w-4 h-4 text-[#a78bfa]"></i> 4 zonas</span>
+      <span class="glass rounded-full px-4 py-1.5 flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-400"></span> Datos en tiempo real</span>
+    </div>
+    <button id="install" class="mt-6 mx-auto pill text-sm px-5 py-2.5" style="background:linear-gradient(100deg,#22d3ee,#3b82f6);color:#04121f"><i data-lucide="download" class="w-4 h-4"></i> Instalar la app</button>
+  </header>
+
+  <!-- PANELES -->
+  <section class="mt-11">
+    <div class="flex items-center gap-3 mb-5">
+      <span class="h-2.5 w-2.5 rounded-full bg-cyan-400"></span>
+      <h2 class="grotesk text-xl font-bold">Paneles en vivo</h2>
+      <span class="text-xs text-slate-500">tócalos para abrirlos a pantalla completa</span>
+    </div>
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <div class="mt-12 glass rounded-2xl p-5">
+    <p class="text-sm text-slate-200 flex items-start gap-2.5 leading-relaxed"><i data-lucide="info" class="w-5 h-5 text-[#7dd3fc] shrink-0 mt-0.5"></i>
+      <span><b class="text-[#bae6fd]">Ski Central Andes es un servicio independiente de divulgación.</b> No es una aplicación oficial de ningún centro de ski ni entidad pública. Las condiciones de nieve, viento, avalancha y estado se <b>estiman desde datos meteorológicos públicos</b> y son referenciales: confirma apertura, pistas y seguridad con cada centro y con la patrulla antes de esquiar.</span>
+    </p>
+  </div>
+  <footer class="mt-6 border-t border-white/10 pt-6 text-center">
+    <p class="text-xs text-slate-500 mb-3">Fuentes:
+      <a href="https://open-meteo.com" target="_blank" rel="noopener" class="text-[#7dd3fc] hover:underline">Open-Meteo</a> (clima) ·
+      <a href="https://www.seismicportal.eu" target="_blank" rel="noopener" class="text-[#7dd3fc] hover:underline">EMSC</a> (sismos) ·
+      <a href="https://www.senapred.cl" target="_blank" rel="noopener" class="text-[#7dd3fc] hover:underline">SENAPRED</a> (emergencias)
+    </p>
+    <p class="grotesk text-sm font-semibold flex items-center justify-center gap-2 grad-name"><i data-lucide="snowflake" class="w-4 h-4 text-[#7dd3fc]"></i> Ski Central Andes · divulgación de montaña</p>
+    <p class="text-xs text-slate-500 mt-2">Los paneles requieren conexión a internet.</p>
+  </footer>
+
+</div>
+
+<script>
+  const PANELS = [
+    { t:'Noticias de Nieve',      f:'../ski-noticias.html',   i:'newspaper',              c:'#7dd3fc', v:true,  d:'Titulares del ski y la montaña en Chile, en vivo, con rotación automática y locución por voz.' },
+    { t:'Condiciones en centros', f:'../ski-condiciones.html', i:'mountain-snow',          c:'#22d3ee', d:'Clima, nieve fresca, altura de nieve, viento y pronóstico de los 17 centros, en vivo.' },
+    { t:'Pronóstico de nieve',    f:'../ski-pronostico.html', i:'cloud-snow',             c:'#a78bfa', d:'Ranking powder: cuánta nieve viene los próximos 7 días y qué centros tendrán más.' },
+    { t:'Viento en los centros',  f:'../ski-viento.html',     i:'wind',                   c:'#5eead4', d:'Rosa de los vientos, ráfagas en vivo y operatividad de andariveles, con ranking de más ventoso.' },
+    { t:'Seguridad en montaña',   f:'../ski-seguridad.html',  i:'shield-alert',           c:'#fb7185', d:'Riesgo de avalancha (1–5), frío, UV y visibilidad, más checklist y teléfonos de emergencia.' },
+    { t:'Estado de la montaña',   f:'../ski-estado.html',     i:'thermometer-snowflake',  c:'#38bdf8', d:'Tablero con la condición esquiable de los 17 centros de un vistazo: base, nieve fresca y viento.' },
+  ];
+
+  function card(p){
+    return `<a href="${p.f}" class="card glass block p-5" style="--accent:${p.c}">
+      <div class="flex items-start justify-between gap-3">
+        <div class="chip-ico h-14 w-14 shrink-0" style="background:${p.c}22;border:1px solid ${p.c}44"><i data-lucide="${p.i}" class="w-7 h-7 metric-icon" style="color:${p.c}"></i></div>
+        <div class="flex flex-col items-end gap-1 shrink-0">
+          <span class="pill text-[10px] uppercase tracking-wider px-2.5 py-1" style="background:rgba(52,211,153,.15);color:#6ee7b7;border:1px solid rgba(52,211,153,.35)"><span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span> en vivo</span>
+          ${p.v?`<span class="voice-chip pill text-[10px] uppercase tracking-wider px-2.5 py-1"><span class="vdot"></span><i data-lucide="mic" class="w-3 h-3"></i> con voz</span>`:''}
+        </div>
+      </div>
+      <h3 class="grotesk text-lg font-bold mt-4">${p.t}</h3>
+      <p class="text-sm text-slate-400 mt-1.5 leading-snug">${p.d}</p>
+      <p class="text-xs font-semibold mt-3 flex items-center gap-1.5" style="color:${p.c}">Abrir panel <i data-lucide="arrow-right" class="w-4 h-4"></i></p>
+    </a>`;
+  }
+  document.getElementById('grid').innerHTML = PANELS.map(card).join('');
+  window.lucide && lucide.createIcons();
+
+  // PWA
+  if ('serviceWorker' in navigator) { window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+  let deferred = null;
+  window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferred=e; const b=document.getElementById('install'); b.style.display='inline-flex'; });
+  document.getElementById('install').addEventListener('click', async ()=>{ if(!deferred) return; deferred.prompt(); await deferred.userChoice; deferred=null; document.getElementById('install').style.display='none'; });
+</script>
+</body>
+</html>
