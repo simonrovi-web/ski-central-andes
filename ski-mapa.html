@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ski Central Andes · Mapa de Centros</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css" />
+  <style>
+    :root{ --cyan:#22d3ee; }
+    *{box-sizing:border-box}
+    html,body{ height:100%; margin:0; font-family:'Inter', ui-sans-serif, system-ui, sans-serif; background:#070e1c; color:#eaf4ff; overflow:hidden; }
+    .grotesk{ font-family:'Space Grotesk', ui-sans-serif, system-ui, sans-serif; }
+    #map{ position:fixed; inset:0; z-index:0; background:#070e1c; }
+    .glass{ background:linear-gradient(160deg, rgba(30,44,74,.82), rgba(12,20,38,.72)); backdrop-filter:blur(14px) saturate(140%); -webkit-backdrop-filter:blur(14px) saturate(140%); border:1px solid rgba(148,180,220,.16); box-shadow:0 8px 30px rgba(0,0,0,.5); }
+    #topbar{ position:fixed; top:14px; left:14px; right:14px; z-index:1000; display:flex; align-items:center; justify-content:space-between; gap:12px; border-radius:16px; padding:10px 16px; }
+    #legend{ position:fixed; left:14px; bottom:14px; z-index:1000; border-radius:14px; padding:12px 14px; font-size:12px; max-width:220px; }
+    #legend h4{ margin:0 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:#9fb6d6; font-weight:700; }
+    .lg-row{ display:flex; align-items:center; gap:8px; margin:5px 0; cursor:pointer; user-select:none; }
+    .lg-row.off{ opacity:.35; }
+    .lg-dot{ width:13px; height:13px; border-radius:50%; box-shadow:0 0 6px currentColor; border:2px solid rgba(255,255,255,.85); }
+    .count{ position:fixed; right:14px; bottom:14px; z-index:1000; border-radius:12px; padding:8px 12px; font-size:12px; color:#c3d5ee; }
+    .metric-icon{ filter:drop-shadow(0 0 8px currentColor); }
+    .grad-name{ background:linear-gradient(100deg,#a5f3fc 0%,#38bdf8 42%,#a78bfa 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+    .leaflet-popup-content-wrapper{ background:#111c33; color:#eaf4ff; border-radius:14px; border:1px solid rgba(148,180,220,.22); box-shadow:0 10px 34px rgba(0,0,0,.6); }
+    .leaflet-popup-tip{ background:#111c33; border:1px solid rgba(148,180,220,.22); }
+    .leaflet-popup-content{ margin:12px 14px; font-size:13px; line-height:1.5; }
+    .leaflet-container a.leaflet-popup-close-button{ color:#9fb6d6; }
+    .pop-t{ font-size:15px; font-weight:800; margin-bottom:2px; }
+    .pop-m{ display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:2px 8px; border-radius:999px; margin-top:6px; }
+    .pop-r{ color:#9fb6d6; font-size:12px; margin-top:4px; display:flex; align-items:center; gap:5px; }
+    a.src{ color:#7dd3fc; text-decoration:underline; text-underline-offset:2px; font-size:12px; }
+    .leaflet-bar a{ background:#16233d; color:#c3d5ee; border-color:rgba(148,180,220,.2); }
+    .leaflet-bar a:hover{ background:#22334f; }
+    .leaflet-tooltip.region-tip{ background:#111c33; color:#dbe8fb; border:1px solid rgba(148,180,220,.32); box-shadow:0 6px 20px rgba(0,0,0,.5); font-size:12px; font-weight:600; padding:4px 9px; border-radius:8px; }
+    .leaflet-tooltip.region-tip::before{ display:none; }
+    .region-label{ color:#bcd3f2; font-size:10px; font-weight:700; letter-spacing:.02em; white-space:nowrap; text-shadow:0 1px 3px #000,0 0 6px #000,0 0 2px #000; pointer-events:none; transform:translate(-50%,-50%); opacity:.9; }
+    @media (max-width:640px){ #topbar{ flex-direction:column; align-items:flex-start; gap:6px; } #topbar .clockwrap{ display:none; } #legend{ font-size:11px; max-width:60vw; } }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div id="topbar" class="glass">
+    <div style="display:flex;align-items:center;gap:12px;min-width:0">
+      <div style="height:42px;width:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(140deg,rgba(34,211,238,.28),rgba(167,139,250,.28));border:1px solid rgba(34,211,238,.4);flex:0 0 auto"><i data-lucide="mountain-snow" class="metric-icon" style="width:24px;height:24px;color:#7dd3fc"></i></div>
+      <div style="min-width:0">
+        <p class="grotesk" style="margin:0;font-size:19px;font-weight:700;line-height:1.05;display:flex;align-items:center;gap:8px"><span class="grad-name">MAPA DE CENTROS</span> <span class="fi fi-cl" style="font-size:.8em;border-radius:3px"></span></p>
+        <p style="margin:2px 0 0;font-size:11px;color:#9fb6d6">Ski Central Andes · los 17 centros de ski de Chile</p>
+      </div>
+    </div>
+    <div class="clockwrap" style="text-align:right;flex:0 0 auto">
+      <p id="clock" style="margin:0;font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1">--:--</p>
+      <p style="margin:2px 0 0;font-size:10px;color:#9fb6d6">hora Chile</p>
+    </div>
+  </div>
+
+  <div id="legend" class="glass">
+    <h4>Filtrar por zona</h4>
+    <div id="legendRows"></div>
+  </div>
+
+  <div id="count" class="glass"><span id="countTxt">—</span></div>
+
+<script src="regiones-cl.js"></script>
+<script>
+  const TZ='America/Santiago';
+  const ZONAS={
+    'Central':    {label:'Central',    color:'#22d3ee'},
+    'Centro-Sur': {label:'Centro-Sur', color:'#a78bfa'},
+    'Sur':        {label:'Sur',        color:'#5eead4'},
+    'Austral':    {label:'Austral',    color:'#fb7185'}
+  };
+  const CENTROS=[
+    { nombre:'Valle Nevado',        zona:'Central', lat:-33.3556, lon:-70.2506, elev:2860 },
+    { nombre:'El Colorado',         zona:'Central', lat:-33.3536, lon:-70.2933, elev:2560 },
+    { nombre:'La Parva',            zona:'Central', lat:-33.3286, lon:-70.2856, elev:2750 },
+    { nombre:'Ski Portillo',        zona:'Central', lat:-32.8342, lon:-70.1289, elev:2680 },
+    { nombre:'Parques de Farellones', zona:'Central', lat:-33.3536, lon:-70.2989, elev:2340 },
+    { nombre:'Lagunillas',          zona:'Central', lat:-33.9800, lon:-70.0800, elev:2200 },
+    { nombre:'Ski El Arpa',         zona:'Central', lat:-32.6600, lon:-70.4000, elev:2690 },
+    { nombre:'Chapa Verde',         zona:'Centro-Sur', lat:-34.2800, lon:-70.3000, elev:2370 },
+    { nombre:'Nevados de Chillán',  zona:'Centro-Sur', lat:-36.9053, lon:-71.4058, elev:1650 },
+    { nombre:'Volcán Antuco',       zona:'Centro-Sur', lat:-37.3500, lon:-71.3800, elev:1850 },
+    { nombre:'Corralco',            zona:'Sur', lat:-38.4386, lon:-71.5133, elev:1550 },
+    { nombre:'Centro de Montaña Pillán', zona:'Sur', lat:-39.4000, lon:-71.9500, elev:1200 },
+    { nombre:'Las Araucarias',      zona:'Sur', lat:-38.6700, lon:-71.7600, elev:1550 },
+    { nombre:'Antillanca',          zona:'Sur', lat:-40.7780, lon:-72.1560, elev:1050 },
+    { nombre:'Volcán Osorno',       zona:'Sur', lat:-41.1053, lon:-72.4962, elev:1200 },
+    { nombre:'El Fraile',           zona:'Austral', lat:-45.6600, lon:-71.8000, elev:1599 },
+    { nombre:'Club Andino · Cerro Mirador', zona:'Austral', lat:-53.1300, lon:-71.0200, elev:600 }
+  ];
+
+  const map=L.map('map',{ zoomControl:true, attributionControl:true }).setView([-38.5,-71.2], 4);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'&copy; OpenStreetMap &copy; CARTO', subdomains:'abcd', maxZoom:19
+  }).addTo(map);
+
+  // ===== Contorno de las regiones de Chile (decorativo) =====
+  let regionesLayer=null, regionesOn=true, labelsLayer=null;
+  const RG_BASE={ color:'#7dd3fc', weight:1, opacity:.4, fillColor:'#38bdf8', fillOpacity:.04 };
+  const RG_HOVER={ color:'#a5f3fc', weight:1.8, opacity:.85, fillColor:'#38bdf8', fillOpacity:.12 };
+  if(window.REGIONES_CL){
+    regionesLayer=L.geoJSON(window.REGIONES_CL,{
+      style:()=>RG_BASE,
+      onEachFeature:(feat,lyr)=>{
+        if(feat.properties&&feat.properties.n) lyr.bindTooltip(feat.properties.n,{sticky:true,className:'region-tip'});
+        lyr.on('mouseover',()=>lyr.setStyle(RG_HOVER));
+        lyr.on('mouseout',()=>lyr.setStyle(RG_BASE));
+      }
+    }).addTo(map);
+    // etiquetas de región
+    function bboxArea(r){ let a=1e9,b=1e9,c=-1e9,d=-1e9; for(const p of r){ if(p[0]<a)a=p[0];if(p[0]>c)c=p[0];if(p[1]<b)b=p[1];if(p[1]>d)d=p[1]; } return (c-a)*(d-b); }
+    function centroid(feat){ const g=feat.geometry; const polys=g.type==='Polygon'?[g.coordinates]:g.coordinates; let best=null,bestA=-1; for(const poly of polys){ const r=poly[0]; const ar=bboxArea(r); if(ar>bestA){bestA=ar;best=r;} } let sx=0,sy=0; for(const p of best){ sx+=p[0]; sy+=p[1]; } return [sy/best.length, sx/best.length]; }
+    function shortName(n){ let s=n.replace(/^Regi[oó]n\s+(del\s+|de\s+)?/i,''); s=s.replace(/^Metropolitana de Santiago$/i,'Metropolitana'); s=s.replace(/\s+del\s+Gral.*$/i,''); s=s.replace(/\s+y\s+Ant[aá]rtica.*$/i,''); s=s.replace(/^Libertador\s+Bernardo\s+/i,''); return s; }
+    labelsLayer=L.layerGroup();
+    window.REGIONES_CL.features.forEach(f=>{ const [lat,lon]=centroid(f); const ic=L.divIcon({className:'region-label', html:shortName(f.properties.n), iconSize:[0,0]}); L.marker([lat,lon],{icon:ic,interactive:false,keyboard:false}).addTo(labelsLayer); });
+    labelsLayer.addTo(map);
+  }
+
+  const active=new Set(Object.keys(ZONAS));
+  const layers={};
+  Object.keys(ZONAS).forEach(z=>layers[z]=L.layerGroup().addTo(map));
+
+  function marker(c){
+    const col=(ZONAS[c.zona]||{}).color||'#7dd3fc';
+    const ic=L.divIcon({className:'', html:`<span style="display:block;width:15px;height:15px;border-radius:50%;background:${col};border:2px solid #fff;box-shadow:0 0 8px ${col},0 1px 4px rgba(0,0,0,.6)"></span>`, iconSize:[15,15], iconAnchor:[7,7]});
+    const mk=L.marker([c.lat,c.lon],{icon:ic});
+    const q=encodeURIComponent(c.nombre+' ski Chile');
+    mk.bindPopup(`<div class="pop-t">🏔️ ${c.nombre}</div>
+      <div class="pop-r"><span>📍</span> Zona ${c.zona}</div>
+      <div class="pop-r"><span>⛰️</span> ${c.elev} m de altitud</div>
+      <span class="pop-m" style="color:${col};background:${col}22;border:1px solid ${col}55">${(ZONAS[c.zona]||{}).label||c.zona}</span>
+      <div style="margin-top:8px"><a class="src" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">Buscar el centro →</a></div>`);
+    return mk;
+  }
+  CENTROS.forEach(c=>{ if(layers[c.zona]) marker(c).addTo(layers[c.zona]); });
+
+  function refreshCount(){
+    const total=CENTROS.filter(c=>active.has(c.zona)).length;
+    document.getElementById('countTxt').textContent=`${total} centros en el mapa`;
+  }
+
+  // Leyenda / filtros por zona
+  const rows=document.getElementById('legendRows');
+  Object.keys(ZONAS).forEach(z=>{
+    const count=CENTROS.filter(c=>c.zona===z).length;
+    if(!count) return;
+    const el=document.createElement('div');
+    el.className='lg-row'; el.dataset.z=z;
+    el.innerHTML=`<span class="lg-dot" style="color:${ZONAS[z].color};background:${ZONAS[z].color}"></span> ${ZONAS[z].label} <span style="color:#6b7f9e;margin-left:auto;padding-left:10px">${count}</span>`;
+    el.addEventListener('click',()=>{
+      if(active.has(z)){ active.delete(z); map.removeLayer(layers[z]); el.classList.add('off'); }
+      else{ active.add(z); layers[z].addTo(map); el.classList.remove('off'); }
+      refreshCount();
+    });
+    rows.appendChild(el);
+  });
+
+  // Separador + toggle Regiones
+  if(regionesLayer){
+    const sep=document.createElement('div'); sep.style.cssText='height:1px;background:rgba(148,180,220,.16);margin:9px 0 7px'; rows.appendChild(sep);
+    const rgRow=document.createElement('div');
+    rgRow.className='lg-row';
+    rgRow.innerHTML=`<span class="lg-dot" style="background:transparent;border:2px solid #7dd3fc;box-shadow:none"></span> Regiones <span style="color:#6b7f9e;margin-left:auto;padding-left:10px">16</span>`;
+    rgRow.addEventListener('click',()=>{
+      regionesOn=!regionesOn;
+      if(regionesOn){ regionesLayer.addTo(map); if(labelsLayer) labelsLayer.addTo(map); rgRow.classList.remove('off'); }
+      else{ map.removeLayer(regionesLayer); if(labelsLayer) map.removeLayer(labelsLayer); rgRow.classList.add('off'); }
+    });
+    rows.appendChild(rgRow);
+  }
+
+  // Enlace a Condiciones
+  const link=document.createElement('a');
+  link.href='ski-condiciones.html';
+  link.style.cssText='display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:#7dd3fc;text-decoration:none';
+  link.innerHTML='<i data-lucide="mountain-snow" style="width:13px;height:13px"></i> Ver condiciones en vivo →';
+  rows.appendChild(link);
+
+  refreshCount();
+
+  function tick(){ document.getElementById('clock').textContent=new Date().toLocaleTimeString('es-CL',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hour12:false}); }
+  tick(); setInterval(tick,1000);
+  window.lucide && lucide.createIcons();
+</script>
+</body>
+</html>
