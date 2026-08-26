@@ -70,6 +70,7 @@
 <script src="regiones-cl.js"></script>
 <script>
   const TZ='America/Santiago';
+  const gmapsLink=(lat,lon)=>`<div style="margin-top:6px"><a class="src" href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank" rel="noopener">📍 Ver en Google Maps →</a></div>`;
   const ZONAS={
     'Central':    {label:'Central',    color:'#22d3ee'},
     'Centro-Sur': {label:'Centro-Sur', color:'#a78bfa'},
@@ -136,7 +137,8 @@
       <div class="pop-r"><span>📍</span> Zona ${c.zona}</div>
       <div class="pop-r"><span>⛰️</span> ${c.elev} m de altitud</div>
       <span class="pop-m" style="color:${col};background:${col}22;border:1px solid ${col}55">${(ZONAS[c.zona]||{}).label||c.zona}</span>
-      <div style="margin-top:8px"><a class="src" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">Buscar el centro →</a></div>`);
+      <div style="margin-top:8px"><a class="src" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">Buscar el centro →</a></div>
+      ${gmapsLink(c.lat,c.lon)}`);
     return mk;
   }
   CENTROS.forEach(c=>{ if(layers[c.zona]) marker(c).addTo(layers[c.zona]); });
