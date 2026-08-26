@@ -31,6 +31,11 @@
     .chip-ico{ display:grid; place-items:center; border-radius:16px; }
     .pill{ display:inline-flex; align-items:center; gap:.4rem; border-radius:999px; font-weight:700; }
     .btn-grad{ background: linear-gradient(100deg,#22d3ee,#3b82f6); color:#04121f; box-shadow:0 8px 22px rgba(34,211,238,.35); }
+    /* ===== Emblema protagonista ===== */
+    .ski-logo{ position:relative; }
+    .ski-logo::before{ content:''; position:absolute; inset:-80% -70%; background:radial-gradient(closest-side, rgba(34,211,238,.32), rgba(167,139,250,.16) 50%, transparent 78%); filter:blur(10px); z-index:0; pointer-events:none; }
+    .ski-logo > *{ position:relative; z-index:1; }
+    .ski-eyebrow{ font-size:11px; letter-spacing:.32em; text-transform:uppercase; color:#7dd3fc; font-weight:700; }
   </style>
 </head>
 <body class="antialiased">
@@ -40,12 +45,14 @@
 
   <!-- ===== HERO ===== -->
   <header class="text-center">
-    <div class="inline-flex items-center gap-3 animate-floaty">
-      <div class="h-16 w-16 rounded-2xl grid place-items-center" style="background:linear-gradient(140deg,rgba(34,211,238,.28),rgba(167,139,250,.28));border:1px solid rgba(34,211,238,.4)">
-        <i data-lucide="snowflake" class="w-9 h-9 text-[#7dd3fc]" style="filter:drop-shadow(0 0 10px rgba(34,211,238,.6))"></i>
+    <div class="ski-logo inline-flex items-center justify-center animate-floaty">
+      <div class="h-20 w-20 sm:h-28 sm:w-28 rounded-[26px] grid place-items-center" style="background:linear-gradient(140deg,rgba(34,211,238,.30),rgba(167,139,250,.30));border:1px solid rgba(34,211,238,.5);box-shadow:0 14px 44px rgba(34,211,238,.28), inset 0 1px 0 rgba(255,255,255,.08)">
+        <i data-lucide="snowflake" class="w-11 h-11 sm:w-16 sm:h-16 text-[#a5f3fc]" style="filter:drop-shadow(0 0 16px rgba(34,211,238,.75))"></i>
       </div>
     </div>
-    <h1 class="grotesk text-3xl sm:text-6xl font-bold tracking-tight mt-4 sm:mt-6 flex items-center justify-center gap-3 flex-wrap">
+    <div style="width:130px;height:1px;margin:16px auto 0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.6),transparent)"></div>
+    <p class="ski-eyebrow mt-5">El ski de Chile, en vivo</p>
+    <h1 class="grotesk text-3xl sm:text-5xl font-bold tracking-tight mt-2 sm:mt-3 flex items-center justify-center gap-3 flex-wrap">
       <span class="grad-name">SKI CENTRAL ANDES</span>
       <span class="fi fi-cl" style="font-size:.7em;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,.4)"></span>
     </h1>
